@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Kuliner</title>
+  <style>
+    
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fff8f0;
+      color: #333;
+    }
+
+    header {
+      background-color: #b22222;
+      color: #fff8f0;
+      text-align: center;
+      padding: 20px;
+    }
+
+    nav {
+      background-color: #8b0000;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+    }
+
+    nav a {
+      color: #fff8f0;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ffd700;
+    }
+
+    .slider {
+      position: relative;
+      max-width: 100%;
+      margin: auto;
+    }
+
+    .slides {
+      display: none;
+    }
+
+    .slides img {
+      width: 100%;
+      height: 450px;
+      object-fit: cover;
+      border-radius: 5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    #menuSlide {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      color: #fff;
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 40px;
+      text-align: center;
+    }
+
+    #menuSlide table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #fff8f0;
+      color: #333;
+      border-radius: 8px;
+    }
+
+    #menuSlide th, #menuSlide td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+    }
+
+    #menuSlide th {
+      background-color: #b22222;
+      color: #fff8f0;
+    }
+
+    #closeMenu {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #c36405;
+      color: #fff8f0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #cart {
+      background:#ffe4c4;
+      margin:20px;
+      padding:20px;
+      border-radius:8px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    #cart button {
+      background:#28a745;
+      color:#fff;
+      padding:10px;
+      border:none;
+      border-radius:5px;
+      cursor:pointer;
+    }
+
+    #cart button:hover {
+      background:#1e7e34;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Selamat Datang Di Kuliner Saya</h1>
+    <h2>wong Adonara</h2>
+  </header>
+
+  <nav>
+    <a onclick="openMenu()">Menu</a>
+    <a href="#cart">Keranjang</a>
+  </nav>
+
+  <!-- Slider -->
+  <section class="slider">
+    <div class="slides fade">
+      <img src="images/makanan 12.jpg" alt="Makanan 12">
+    </div>
+    <div class="slides fade">
+      <img src="images/makanan 3.png" alt="Makanan 3">
+    </div>
+    <div class="slides fade">
+      <img src="images/makanan 4.jpg" alt="Makanan 4">
+    </div>
+  </section>
+
+  <!-- Slide Menu -->
+  <div id="menuSlide">
+    <h2>Daftar Menu Khas Nusantara</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nama Menu</th>
+          <th>Harga</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="menuTable"></tbody>
+    </table>
+
+    <button id="closeMenu" onclick="closeMenu()">Kembali</button>
+  </div>
+
+  <!-- Keranjang Pesanan -->
+  <section id="cart">
+  <h2>Keranjang Pesanan</h2>
+  <ul id="cartItems"></ul>
+  <h3>Total: Rp<span id="cartTotal">0</span></h3>
+  <button onclick="checkout()">Chec in - Bayar di Tempat</button>
+  <!-- Tombol baru untuk batalkan pesanan -->
+  <button onclick="cancelOrder()" style="background:#dc3545; margin-left:10px;">Batalkan Pesanan</button>
+</section>
+<section>
+  
+</section>
+<script></script>
+
+<script>
+  // Slider otomatis
+  let slideIndex = 0;
+  showSlides();
+  function showSlides() {
+    let slides = document.getElementsByClassName("slides");
+    for (let i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) { slideIndex = 1 }
+    slides[slideIndex - 1].style.display = "block";
+    setTimeout(showSlides, 3000);
+  }
+
+  // Fungsi buka/tutup menu
+  function openMenu() {
+    document.getElementById("menuSlide").style.display = "block";
+  }
+  function closeMenu() {
+    document.getElementById("menuSlide").style.display = "none";
+  }
+
+  // Keranjang
+  let cart = [];
+  let total = 0;
+
+  function addToCart(menuName, price) {
+    cart.push({name: menuName, price: price});
+    total += price;
+    renderCart();
+    closeMenu();
+    document.getElementById("cart").scrollIntoView({behavior:"smooth"});
+  }
+
+  function renderCart() {
+    const cartList = document.getElementById("cartItems");
+    cartList.innerHTML = "";
+    cart.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item.name + " - Rp" + item.price;
+      cartList.appendChild(li);
+    });
+    document.getElementById("cartTotal").textContent = total;
+  }
+
+  function checkout() {
+    alert("Pesanan Anda:\n" + cart.map(i => i.name + " - Rp" + i.price).join("\n") + 
+          "\n\nTotal: Rp" + total + 
+          "\n\nMetode Pembayaran: Bayar di Tempat (COD)");
+  }function cancelOrder() {
+  // Kosongkan keranjang dan total
+  cart = [];
+  total = 0;
+  renderCart();
+  alert("Pesanan telah dibatalkan.");
+}function shareLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      // Buka Google Maps dengan koordinat pengguna
+      const mapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+      window.open(mapsUrl, "_blank");
+    }, function(error) {
+      alert("Tidak bisa mendapatkan lokasi. Pastikan GPS aktif.");
+    });
+  } else {
+    alert("Browser Anda tidak mendukung fitur lokasi.");
+  }
+}
+
+
+</script>
+<script>
+  fetch("http://localhost/web_saya/kuliner-api/getMenu.php")
+  .then(res => res.json())
+  .then(data => {
+    console.log(data); // 🔥 cek apakah data masuk
+
+    const table = document.getElementById("menuTable");
+
+    data.forEach(item => {
+      table.innerHTML += `
+        <tr>
+          <td>${item.nama}</td>
+          <td>Rp${item.harga}</td>
+          <td>
+            <button onclick="addToCart('${item.nama}', ${item.harga})">
+              Pesan
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+  })
+  .catch(err => console.log("ERROR:", err));
+</script>
+
+</body>
+</html>
